@@ -1,4 +1,5 @@
 const { Storage } = require("@google-cloud/storage");
+const fs = require("fs");
 const { getFilesizeInBytes } = require("../utils");
 
 const storage = new Storage({ keyFilename: "cloud-storage-key.json" });
