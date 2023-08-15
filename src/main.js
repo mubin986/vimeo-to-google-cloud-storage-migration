@@ -75,7 +75,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
 };
 
 const main = async () => {
-  let concurrency = 1;
+  let concurrency = 100;
 
   let c = 0;
   let p_arr = [];
