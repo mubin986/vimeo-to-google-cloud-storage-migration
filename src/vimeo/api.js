@@ -45,29 +45,24 @@ const downloadVideoFromUrl = async ({
   url,
   filename,
   dirname,
-  showProgress = false,
+  onProgress = false,
 }) => {
   try {
     const tempDownloadPath = path.resolve("temp", filename);
     const savepath = path.resolve(dirname, filename);
     console.log("Downloading video from", url, "to", savepath);
-    let doenloadPercentage = 0;
+    let downloadPercentage = 0;
     const response = await axios.get(url, {
       responseType: "stream",
-      onDownloadProgress: !showProgress
+      onDownloadProgress: !onProgress
         ? null
         : (progressEvent) => {
             let percentCompleted = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
             );
-            if (percentCompleted > doenloadPercentage) {
-              doenloadPercentage = percentCompleted;
-              console.log(
-                "🔻 Download progress",
-                savepath,
-                doenloadPercentage,
-                "%"
-              );
+            if (percentCompleted > downloadPercentage) {
+              downloadPercentage = percentCompleted;
+              onProgress(downloadPercentage);
             }
           },
     });

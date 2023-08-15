@@ -15,7 +15,8 @@ for (const dir of dirs) {
 
 const downloadAndUpload = async ({ id, c, total }) => {
   try {
-    console.log(c, "/", total);
+    const counter = `(${c} / ${total})`;
+    console.log(counter);
     const video = await getVideoById(id);
     if (!video) {
       console.log(`[x] #--> Video ${id} not found`);
@@ -38,7 +39,9 @@ const downloadAndUpload = async ({ id, c, total }) => {
         filename,
         filepath: savepath,
         destination,
-        showProgress: true,
+        onProgress: (percentage) => {
+          console.log("⬆️", counter, filename, "-> Uploaded", percentage, "%");
+        },
         makePublic: true,
       });
     } else {
@@ -52,13 +55,24 @@ const downloadAndUpload = async ({ id, c, total }) => {
         url,
         filename,
         dirname: "media",
-        showProgress: true,
+        onProgress: (percentage) => {
+          console.log(
+            "🔻",
+            counter,
+            "Download progress",
+            savepath,
+            percentage,
+            "%"
+          );
+        },
       });
       storage.uploadVideo({
         filename,
         filepath: savepath,
         destination,
-        showProgress: true,
+        onProgress: (percentage) => {
+          console.log("⬆️", counter, filename, "-> Uploaded", percentage, "%");
+        },
         makePublic: true,
       });
     }

@@ -47,7 +47,7 @@ const uploadVideo = async ({
   filename,
   destination,
   autoRemoveFromLocal = true,
-  showProgress = false,
+  onProgress = null,
   makePublic = false,
 }) => {
   try {
@@ -70,7 +70,7 @@ const uploadVideo = async ({
     const response = await bucket.upload(filepath, {
       public: makePublic,
       destination,
-      onUploadProgress: !showProgress
+      onUploadProgress: !onProgress
         ? null
         : (data) => {
             const newPercentage = Math.floor(
@@ -78,7 +78,7 @@ const uploadVideo = async ({
             );
             if (newPercentage > uploadPercentage) {
               uploadPercentage = newPercentage;
-              console.log("⬆️", filename, "-> Uploaded", uploadPercentage, "%");
+              onProgress(uploadPercentage);
             }
           },
     });
