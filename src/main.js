@@ -28,7 +28,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
     }
     console.log(id, "->", url);
     const filename = `${id}.mp4`;
-    const savepath = `${mediaDir}/${filename}`;
+    const savepath = `media/${filename}`;
     const destination = `backup/${id}-${video.name}.mp4`;
     if (fs.existsSync(savepath)) {
       console.log(
