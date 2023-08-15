@@ -34,7 +34,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
       console.log(
         `[###] Video ${id} already downloaded before -> ${savepath}}`
       );
-      await storage.uploadVideo({
+      storage.uploadVideo({
         filename,
         filepath: savepath,
         destination,
@@ -54,7 +54,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
         dirname: "media",
         showProgress: true,
       });
-      await storage.uploadVideo({
+      storage.uploadVideo({
         filename,
         filepath: savepath,
         destination,
