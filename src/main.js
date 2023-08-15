@@ -26,6 +26,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
     console.log(id, "->", url);
     const filename = `${id}.mp4`;
     const savepath = `${mediaDir}/${filename}`;
+    const destination = `backup/${id}-${video.name}.mp4`;
     if (fs.existsSync(savepath)) {
       console.log(
         `[###] Video ${id} already downloaded before -> ${savepath}}`
@@ -33,7 +34,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
       await storage.uploadVideo({
         filename,
         filepath: savepath,
-        destination: `backup/${id}-${video.name}.mp4`,
+        destination,
         showProgress: true,
         makePublic: true,
       });
@@ -46,7 +47,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
       await storage.uploadVideo({
         filename,
         filepath: savepath,
-        destination: `backup/${id}-${video.name}.mp4`,
+        destination,
         showProgress: true,
         makePublic: true,
       });
