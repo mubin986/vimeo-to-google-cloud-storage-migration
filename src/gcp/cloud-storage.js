@@ -31,6 +31,16 @@ const getFiles = async () => {
   }
 };
 
+const isFileExist = async (destination) => {
+  try {
+    const fileExist = await bucket.file(destination).exists();
+    return fileExist[0];
+  } catch (error) {
+    console.log("ERROR isFileExist:", error);
+    return false;
+  }
+};
+
 const uploadVideo = async ({
   filepath,
   filename,
@@ -82,4 +92,5 @@ module.exports = {
   createBucket,
   uploadVideo,
   getFiles,
+  isFileExist,
 };

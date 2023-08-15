@@ -39,6 +39,12 @@ const downloadAndUpload = async ({ id, c, total }) => {
         makePublic: true,
       });
     } else {
+      if (await storage.isFileExist(destination)) {
+        console.log(
+          `[###] Video ${id} already uploaded before -> ${destination}}`
+        );
+        return;
+      }
       await downloadVideoFromUrl({
         url,
         savepath,
