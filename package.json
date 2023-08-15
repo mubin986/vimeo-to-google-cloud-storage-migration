@@ -1,0 +1,18 @@
+{
+  "name": "vimeo-to-google-cloud-storage-migration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "nodemon run src/main.js",
+    "start": "node run src/main.js"
+  },
+  "keywords": [],
+  "author": "Shariful Islam Mubin",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^7.0.1",
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1"
+  }
+}

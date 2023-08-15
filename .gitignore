@@ -1,0 +1,6 @@
+node_modules
+.env
+package-lock.json
+vimeo_ids.json
+cloud-storage-key.json
+media
