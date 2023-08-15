@@ -76,7 +76,7 @@ const uploadVideo = async ({
             const newPercentage = Math.floor(
               (data.bytesWritten / totalBytes) * 100
             );
-            if (newPercentage > uploadPercentage) {
+            if (newPercentage % 10 == 0 && newPercentage > uploadPercentage) {
               uploadPercentage = newPercentage;
               onProgress(uploadPercentage);
             }

@@ -60,7 +60,10 @@ const downloadVideoFromUrl = async ({
             let percentCompleted = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
             );
-            if (percentCompleted > downloadPercentage) {
+            if (
+              percentCompleted % 10 == 0 &&
+              percentCompleted > downloadPercentage
+            ) {
               downloadPercentage = percentCompleted;
               onProgress(downloadPercentage);
             }
