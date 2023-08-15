@@ -63,7 +63,7 @@ const downloadVideoFromUrl = async ({
             if (percentCompleted > doenloadPercentage) {
               doenloadPercentage = percentCompleted;
               console.log(
-                "Download progress",
+                "🔻 Download progress",
                 savepath,
                 doenloadPercentage,
                 "%"
@@ -74,7 +74,7 @@ const downloadVideoFromUrl = async ({
     console.log("Saving video to", tempDownloadPath);
     await fs.promises.writeFile(tempDownloadPath, response.data);
     await fs.promises.rename(tempDownloadPath, savepath);
-    console.log("Video saved to", savepath);
+    console.log("💝 Video saved to", savepath);
     return savepath;
   } catch (error) {
     console.log("ERROR downloadVideoFromUrl", error);

@@ -56,7 +56,7 @@ const uploadVideo = async ({
     }
     const totalBytes = getFilesizeInBytes(filepath);
     console.log(
-      "Uploading",
+      "⬆️ Uploading",
       filename,
       "with size",
       totalBytes,
@@ -80,7 +80,7 @@ const uploadVideo = async ({
             }
           },
     });
-    console.log(`${filepath} uploaded to ${bucketName}.`);
+    console.log(`✅ ${filepath} uploaded to ${bucketName}.`);
     return response;
   } catch (error) {
     console.log("ERROR uploadVideo:", error);
