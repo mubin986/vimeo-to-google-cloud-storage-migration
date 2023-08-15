@@ -57,7 +57,7 @@ const uploadVideo = async ({
     }
     const totalBytes = getFilesizeInBytes(filepath);
     console.log(
-      "⬆️ Uploading",
+      "⬆️ ⬆️ ⬆️ Uploading",
       filename,
       "with size",
       totalBytes,
@@ -77,7 +77,7 @@ const uploadVideo = async ({
             );
             if (newPercentage > uploadPercentage) {
               uploadPercentage = newPercentage;
-              console.log(filename, "-> Uploaded", uploadPercentage, "%");
+              console.log("⬆️", filename, "-> Uploaded", uploadPercentage, "%");
             }
           },
     });
