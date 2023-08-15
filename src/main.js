@@ -5,9 +5,12 @@ const { getVimeoHighestQualityDownloadLink } = require("./utils");
 const vimeoIds = require("./data/vimeo_ids.json");
 const storage = require("./gcp/cloud-storage");
 
-const mediaDir = "media";
-if (!fs.existsSync(mediaDir)) {
-  fs.mkdirSync(mediaDir);
+const dirs = ["media", "temp"];
+
+for (const dir of dirs) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
 }
 
 const downloadAndUpload = async ({ id, c, total }) => {

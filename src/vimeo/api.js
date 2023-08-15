@@ -69,7 +69,9 @@ const downloadVideoFromUrl = async ({
             }
           },
     });
-    await fs.promises.writeFile(savepath, response.data);
+    const tempDownloadPath = path.resolve("temp", savepath);
+    await fs.promises.writeFile(tempDownloadPath, response.data);
+    await fs.promises.rename(tempDownloadPath, savepath);
     console.log("Video saved to", savepath);
     return savepath;
   } catch (error) {
