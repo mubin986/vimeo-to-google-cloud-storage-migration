@@ -43,11 +43,13 @@ const deleteVideoById = async (id) => {
 
 const downloadVideoFromUrl = async ({
   url,
-  savepath,
+  filename,
+  dirname,
   showProgress = false,
 }) => {
   try {
-    savepath = path.resolve(savepath);
+    const tempDownloadPath = path.resolve("temp", filename);
+    const savepath = path.resolve(dirname, filename);
     console.log("Downloading video from", url, "to", savepath);
     let doenloadPercentage = 0;
     const response = await axios.get(url, {
@@ -69,7 +71,7 @@ const downloadVideoFromUrl = async ({
             }
           },
     });
-    const tempDownloadPath = path.resolve("temp", savepath);
+    console.log("Saving video to", tempDownloadPath);
     await fs.promises.writeFile(tempDownloadPath, response.data);
     await fs.promises.rename(tempDownloadPath, savepath);
     console.log("Video saved to", savepath);

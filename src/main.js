@@ -9,7 +9,7 @@ const dirs = ["media", "temp"];
 
 for (const dir of dirs) {
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, { recursive: true });
   }
 }
 
@@ -29,7 +29,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
     console.log(id, "->", url);
     const filename = `${id}.mp4`;
     const savepath = `media/${filename}`;
-    const destination = `backup/${id}-${video.name}.mp4`;
+    const destination = `hi/${id}-${video.name}.mp4`;
     if (fs.existsSync(savepath)) {
       console.log(
         `[###] Video ${id} already downloaded before -> ${savepath}}`
@@ -50,7 +50,8 @@ const downloadAndUpload = async ({ id, c, total }) => {
       }
       await downloadVideoFromUrl({
         url,
-        savepath,
+        filename,
+        dirname: "media",
         showProgress: true,
       });
       await storage.uploadVideo({
@@ -74,7 +75,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
 };
 
 const main = async () => {
-  let concurrency = 20;
+  let concurrency = 1;
 
   let c = 0;
   let p_arr = [];
