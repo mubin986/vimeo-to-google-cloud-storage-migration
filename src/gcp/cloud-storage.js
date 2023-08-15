@@ -45,6 +45,7 @@ const uploadVideo = async ({
   filepath,
   filename,
   destination,
+  autoRemoveFromLocal = true,
   showProgress = false,
   makePublic = false,
 }) => {
@@ -81,6 +82,10 @@ const uploadVideo = async ({
           },
     });
     console.log(`✅ ${filepath} uploaded to ${bucketName}.`);
+    if (autoRemoveFromLocal) {
+      fs.rmSync(filepath);
+      console.log("💦 Removed from local", filepath);
+    }
     return response;
   } catch (error) {
     console.log("ERROR uploadVideo:", error);

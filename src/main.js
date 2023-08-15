@@ -62,13 +62,6 @@ const downloadAndUpload = async ({ id, c, total }) => {
         makePublic: true,
       });
     }
-
-    fs.rmSync(savepath);
-    console.log(
-      "[###] COMPLETE Video",
-      id,
-      "downloaded and uploaded to GCP, removed from local"
-    );
   } catch (error) {
     console.log(c, id, "ERROR", error);
   }
