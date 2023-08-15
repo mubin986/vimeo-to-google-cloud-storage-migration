@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "dev": "nodemon run src/main.js",
-    "start": "node run src/main.js"
+    "start": "node src/main.js"
   },
   "keywords": [],
   "author": "Shariful Islam Mubin",
