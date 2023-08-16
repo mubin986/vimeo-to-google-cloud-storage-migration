@@ -32,10 +32,12 @@ const getFiles = async () => {
   }
 };
 
-const isFileExist = async (destination) => {
+const isFileExist = async (prefix) => {
   try {
-    const fileExist = await bucket.file(destination).exists();
-    return fileExist[0];
+    const fileExist = await bucket.getFiles({
+      prefix,
+    });
+    return fileExist[0].length > 0;
   } catch (error) {
     console.log("ERROR isFileExist:", error);
     return false;
