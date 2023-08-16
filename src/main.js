@@ -18,8 +18,15 @@ const downloadAndUpload = async ({ id, c, total }) => {
     const counter = `(${c} / ${total})`;
     console.log(counter);
     const prefix = `videos/${id}`;
+    const filename = `${id}.mp4`;
+    const savepath = `media/${filename}`;
+    const destination = `${prefix}-${video.name}.mp4`;
+
     const fileExist = await storage.isFileExist(prefix);
     if (fileExist) {
+      if (fs.existsSync(savepath)) {
+        fs.unlinkSync(savepath);
+      }
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       return;
     }
@@ -34,9 +41,6 @@ const downloadAndUpload = async ({ id, c, total }) => {
       return;
     }
     console.log(id, "->", url);
-    const filename = `${id}.mp4`;
-    const savepath = `media/${filename}`;
-    const destination = `${prefix}-${video.name}.mp4`;
     if (fs.existsSync(savepath)) {
       console.log(
         `[###] Video ${id} already downloaded before -> ${savepath}}`
