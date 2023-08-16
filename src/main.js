@@ -13,9 +13,9 @@ for (const dir of dirs) {
   }
 }
 
-const downloadAndUpload = async ({ id, c, total }) => {
+const downloadAndUpload = async ({ id, c, total, i }) => {
   try {
-    const counter = `(${c} / ${total})`;
+    const counter = `(${i} <> ${c} / ${total})`;
     console.log(counter);
     const prefix = `videos/${id}`;
     const filename = `${id}.mp4`;
@@ -90,14 +90,17 @@ const main = async () => {
   let concurrency = 50;
 
   let c = 0;
+  let i = 0;
   let p_arr = [];
   const total = vimeoIds.length;
   for (const id of vimeoIds) {
     c++;
-    p_arr.push(downloadAndUpload({ id, c, total }));
+    i++;
+    p_arr.push(downloadAndUpload({ id, c, total, i }));
     if (p_arr.length >= concurrency) {
       await Promise.all(p_arr);
       p_arr = [];
+      i = 0;
     }
   }
 };
