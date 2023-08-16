@@ -24,10 +24,11 @@ const downloadAndUpload = async ({ id, c, total }) => {
 
     const fileExist = await storage.isFileExist(prefix);
     if (fileExist) {
+      console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       if (fs.existsSync(savepath)) {
         fs.unlinkSync(savepath);
+        console.log("💦 Removed from local", savepath);
       }
-      console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       return;
     }
     const video = await getVideoById(id);
