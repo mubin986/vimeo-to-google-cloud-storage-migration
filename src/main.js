@@ -20,7 +20,7 @@ const downloadAndUpload = async ({ id, c, total }) => {
     const prefix = `videos/${id}`;
     const fileExist = await storage.isFileExist(prefix);
     if (fileExist) {
-      console.log(`[x] #--> Video ${id} already uploaded before`);
+      console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       return;
     }
     const video = await getVideoById(id);
