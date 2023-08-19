@@ -18,15 +18,33 @@ for (const dir of dirs) {
   }
 }
 
-const downloadAndUpload = async ({ id, c, total, i }) => {
+let skipCount = 0;
+
+const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
   try {
+    const skipPath = path.join(__dirname, "data", "vimeo_ids_skip.json");
+    let videoIdsSkip = fs.existsSync(skipPath)
+      ? JSON.parse(fs.readFileSync(skipPath))
+      : [];
+    videoIdsSkip = Array.from(videoIdsSkip, (x) => `${x}`);
+
     const counter = `(${i} <> ${c} / ${total})`;
-    console.log(counter);
+    // console.log(counter);
     const prefix = `videos/${id}`;
     const filename = `${id}.mp4`;
     const savepath = `media/${filename}`;
 
-    const fileExist = await storage.isFileExist(prefix);
+    let fileExist = false;
+    if (videoIdsSkip.includes(`${id}`)) {
+      skipCount++;
+      fileExist = true;
+      console.log(`${counter} [x] #--> Video ${id} already uploaded before`, {
+        skipCount,
+      });
+    } else if (checkFromGcs) {
+      await storage.isFileExist(prefix);
+    }
+    
     if (fileExist) {
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       if (fs.existsSync(savepath)) {
@@ -101,7 +119,7 @@ const startDownloadUpload = async () => {
   for (const id of vimeoIds) {
     c++;
     i++;
-    p_arr.push(downloadAndUpload({ id, c, total, i }));
+    p_arr.push(downloadAndUpload({ id, c, total, i, checkFromGcs: true }));
     if (p_arr.length >= concurrency) {
       await Promise.all(p_arr);
       p_arr = [];
@@ -110,7 +128,7 @@ const startDownloadUpload = async () => {
   }
 };
 
-const fetchAndSaveVimeoVideos = async (page, totalPage) => {
+const fetchAndSaveVimeoVideos = async (page = 1, totalPage) => {
   totalPage = totalPage ? Math.ceil(totalPage) : null;
   console.log(`Fetching page ${page} out of ${totalPage}`);
   const per_page = 100;
@@ -129,10 +147,27 @@ const fetchAndSaveVimeoVideos = async (page, totalPage) => {
   }
 };
 
+const vimeoVideosToIds = () => {
+  console.log("Vimeo videos to ids -> start");
+  const files = fs.readdirSync(path.resolve(__dirname, "data", "vimeo-db"));
+  const ids = [];
+  for (const file of files) {
+    const data = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "data", "vimeo-db", file), "utf8")
+    );
+    for (const video of data.data) {
+      ids.push(video.uri.split("/")[2]);
+    }
+  }
+  fs.writeFileSync(
+    path.resolve(__dirname, "data", "vimeo_ids.json"),
+    JSON.stringify(ids, null, 2)
+  );
+  console.log("Vimeo videos to ids -> done");
+};
+
 const main = async () => {
-  console.log("Start");
-  await fetchAndSaveVimeoVideos(1);
-  console.log("Done fetching");
+  startDownloadUpload();
 };
 
 main();
