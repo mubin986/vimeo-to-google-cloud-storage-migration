@@ -1,11 +1,16 @@
 require("dotenv").config();
 const fs = require("fs");
-const { getVideoById, downloadVideoFromUrl } = require("./vimeo/api");
+const {
+  getVideoById,
+  downloadVideoFromUrl,
+  listVideos,
+} = require("./vimeo/api");
 const { getVimeoHighestQualityDownloadLink } = require("./utils");
 const vimeoIds = require("./data/vimeo_ids.json");
 const storage = require("./gcp/cloud-storage");
+const path = require("path");
 
-const dirs = ["media", "temp"];
+const dirs = ["media", "temp", "src/data/vimeo-db"];
 
 for (const dir of dirs) {
   if (!fs.existsSync(dir)) {
@@ -86,7 +91,7 @@ const downloadAndUpload = async ({ id, c, total, i }) => {
   }
 };
 
-const main = async () => {
+const startDownloadUpload = async () => {
   let concurrency = 50;
 
   let c = 0;
@@ -103,6 +108,31 @@ const main = async () => {
       i = 0;
     }
   }
+};
+
+const fetchAndSaveVimeoVideos = async (page, totalPage) => {
+  totalPage = totalPage ? Math.ceil(totalPage) : null;
+  console.log(`Fetching page ${page} out of ${totalPage}`);
+  const per_page = 100;
+  const data = await listVideos({ per_page, page });
+  if (!data) {
+    console.log("ERROR fetchAndSaveVimeoVideos", page);
+    return;
+  }
+  fs.writeFileSync(
+    path.resolve(__dirname, "data", "vimeo-db", `page-${page}.json`),
+    JSON.stringify(data, null, 2)
+  );
+  console.log(`Saved page ${page} out of ${totalPage}`);
+  if (data.paging.next) {
+    await fetchAndSaveVimeoVideos(page + 1, data.total / per_page);
+  }
+};
+
+const main = async () => {
+  console.log("Start");
+  await fetchAndSaveVimeoVideos(1);
+  console.log("Done fetching");
 };
 
 main();

@@ -22,7 +22,7 @@ const getVideoById = async (id) => {
 const listVideos = async ({ per_page = 25, page = 1 }) => {
   try {
     const response = await client.get(
-      `/videos?page=${page}&per_page=${per_page}`
+      `/me/videos?page=${page}&per_page=${per_page}`
     );
     return response.data;
   } catch (error) {
