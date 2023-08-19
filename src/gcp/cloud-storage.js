@@ -18,11 +18,9 @@ const createBucket = async () => {
   }
 };
 
-const getFiles = async () => {
+const getFiles = async (prefix) => {
   try {
-    const [files] = await storage.bucket(bucketName).getFiles({
-      prefix: "videos/5",
-    });
+    const [files] = await storage.bucket(bucketName).getFiles({ prefix });
     console.log("Files:");
     files.forEach((file) => {
       console.log(file.name);
