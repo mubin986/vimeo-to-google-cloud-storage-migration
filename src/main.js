@@ -44,7 +44,7 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
     } else if (checkFromGcs) {
       fileExist = await storage.isFileExist(prefix);
     }
-    
+
     if (fileExist) {
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       if (fs.existsSync(savepath)) {
@@ -109,6 +109,14 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
   }
 };
 
+const displayDownUpStatus = () => {
+  const downPath = path.resolve(__dirname, "..", "temp");
+  const upPath = path.resolve(__dirname, "..", "media");
+  const downCount = fs.readdirSync(downPath).length;
+  const upCount = fs.readdirSync(upPath).length;
+  console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}`);
+}
+
 const startDownloadUpload = async () => {
   let concurrency = 50;
 
@@ -116,6 +124,7 @@ const startDownloadUpload = async () => {
   let i = 0;
   let p_arr = [];
   const total = vimeoIds.length;
+  setInterval(displayDownUpStatus, 5000);
   for (const id of vimeoIds) {
     c++;
     i++;
