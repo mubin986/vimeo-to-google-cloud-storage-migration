@@ -42,7 +42,7 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
         skipCount,
       });
     } else if (checkFromGcs) {
-      await storage.isFileExist(prefix);
+      fileExist = await storage.isFileExist(prefix);
     }
     
     if (fileExist) {
