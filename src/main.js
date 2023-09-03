@@ -132,7 +132,7 @@ const startDownloadUpload = async ({ platform }) => {
     console.log("Please provide platform");
     return;
   }
-  let concurrency = 1;
+  let concurrency = 10;
 
   let c = 0;
   let i = 0;
