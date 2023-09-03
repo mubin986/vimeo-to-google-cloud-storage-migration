@@ -49,7 +49,6 @@ const downloadAndUpload = async ({
       fileExist = await storage.isFileExist(prefix);
     }
 
-
     if (fileExist) {
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       if (fs.existsSync(savepath)) {
@@ -126,7 +125,7 @@ const displayDownUpStatus = () => {
   const downCount = fs.readdirSync(downPath).length;
   const upCount = fs.readdirSync(upPath).length;
   console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}`);
-}
+};
 
 const startDownloadUpload = async () => {
   let concurrency = 50;
@@ -219,13 +218,12 @@ const findRemainingVideos = async () => {
   const thirdPartyIds = thirdPartyData.result.map((x) =>
     x.reference_id && isFinite(x.reference_id)
       ? x.reference_id
-      : x.custom_id1 || "null"
+      : x.custom_id1 || null
   );
   const gcsBucketIds = gcsBucketData.map(
     (x) => x.name.split("/")[1].split("-")[0]
   );
-  console.log(gcsBucketIds);
-  const remainingIds = thirdPartyIds.filter((x) => !gcsBucketIds.includes(x));
+  const remainingIds = thirdPartyIds.filter((x) => x && !gcsBucketIds.includes(x));
   fs.writeFileSync(
     remainingThirdPartyJsonPath,
     JSON.stringify(remainingIds, null, 2)
