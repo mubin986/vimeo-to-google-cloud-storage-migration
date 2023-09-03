@@ -60,7 +60,7 @@ const downloadAndUpload = async ({
     const video =
       platform == "vimeo"
         ? await vimeoApi.getVideoById(id)
-        : await thirdPartyApi.getVideoById(id);
+        : await thirdPartyApi.getVideoByCustomId(id);
     if (!video) {
       console.log(`[x] #--> Video ${id} not found`);
       return;
