@@ -21,6 +21,7 @@ const downloadVideoFromUrl = async ({
         concurrency: 20,
         outputFile: tempDownloadPath,
         streamUrl: url,
+        // logger: null,
       });
       if (onProgress) onProgress(100);
     } else {
