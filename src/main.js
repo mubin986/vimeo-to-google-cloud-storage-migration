@@ -125,9 +125,11 @@ const displayDownUpStatus = () => {
   const upPath = path.resolve(__dirname, "..", "media");
   const downCount = fs.readdirSync(downPath).length;
   const upCount = fs.readdirSync(upPath).length;
-  console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}`);
+  console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}, i -> ${i}, p_arr -> ${p_arr.length}`);
 };
 
+let i = 0;
+let p_arr = [];
 const startDownloadUpload = async ({ platform }) => {
   if (!platform) {
     console.log("Please provide platform");
@@ -136,8 +138,6 @@ const startDownloadUpload = async ({ platform }) => {
   let concurrency = 15;
 
   let c = 0;
-  let i = 0;
-  let p_arr = [];
   const videoIds =
     platform == "vimeo"
       ? require("./data/vimeo_ids.json")
@@ -156,6 +156,7 @@ const startDownloadUpload = async ({ platform }) => {
       i = 0;
     }
   }
+  console.log("******* ALL DONE *******")
 };
 
 const fetchAndSaveVimeoVideos = async (page = 1, totalPage) => {
