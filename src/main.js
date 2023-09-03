@@ -74,6 +74,7 @@ const downloadAndUpload = async ({
       return;
     }
     console.log(id, "->", url);
+    video.name = video.name || video.result?.name;
     const destination = `${prefix}-${video.name}.mp4`;
     if (fs.existsSync(savepath)) {
       console.log(
