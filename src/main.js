@@ -233,14 +233,16 @@ const findRemainingVideos = async () => {
 const processThirdPartyAndGcs = async () => {
   console.log("Start");
   await listVideosFromThirdParty();
+  console.log("Third party done");
   await listGcsVideos();
+  console.log("GCS done");
   findRemainingVideos();
   console.log("Done");
 };
 
 const main = async () => {
-  processThirdPartyAndGcs();
-  // startDownloadUpload({ platform: "third-party" });
+  // processThirdPartyAndGcs();
+  startDownloadUpload({ platform: "third-party" });
 };
 
 main();
