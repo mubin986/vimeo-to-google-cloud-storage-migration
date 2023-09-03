@@ -46,8 +46,9 @@ const downloadAndUpload = async ({
         skipCount,
       });
     } else if (checkFromGcs) {
-      await storage.isFileExist(prefix);
+      fileExist = await storage.isFileExist(prefix);
     }
+
 
     if (fileExist) {
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
@@ -119,12 +120,15 @@ const downloadAndUpload = async ({
   }
 };
 
-const startDownloadUpload = async ({ platform }) => {
-  if (!platform) {
-    console.log("Platform is required");
-    return;
-  }
+const displayDownUpStatus = () => {
+  const downPath = path.resolve(__dirname, "..", "temp");
+  const upPath = path.resolve(__dirname, "..", "media");
+  const downCount = fs.readdirSync(downPath).length;
+  const upCount = fs.readdirSync(upPath).length;
+  console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}`);
+}
 
+const startDownloadUpload = async () => {
   let concurrency = 50;
 
   let c = 0;
@@ -135,6 +139,7 @@ const startDownloadUpload = async ({ platform }) => {
       ? require("./data/vimeo_ids.json")
       : require("./data/third-party-remaining.json");
   const total = videoIds.length;
+  setInterval(displayDownUpStatus, 5000);
   for (const id of videoIds) {
     c++;
     i++;
