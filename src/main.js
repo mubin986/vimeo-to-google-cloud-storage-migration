@@ -127,7 +127,11 @@ const displayDownUpStatus = () => {
   console.log(`🙄 Downloading: 🔻 ${downCount}, 🔼 Uploading: ${upCount}`);
 };
 
-const startDownloadUpload = async () => {
+const startDownloadUpload = async ({ platform }) => {
+  if (!platform) {
+    console.log("Please provide platform");
+    return;
+  }
   let concurrency = 50;
 
   let c = 0;
@@ -223,7 +227,9 @@ const findRemainingVideos = async () => {
   const gcsBucketIds = gcsBucketData.map(
     (x) => x.name.split("/")[1].split("-")[0]
   );
-  const remainingIds = thirdPartyIds.filter((x) => x && !gcsBucketIds.includes(x));
+  const remainingIds = thirdPartyIds.filter(
+    (x) => x && !gcsBucketIds.includes(x)
+  );
   fs.writeFileSync(
     remainingThirdPartyJsonPath,
     JSON.stringify(remainingIds, null, 2)
