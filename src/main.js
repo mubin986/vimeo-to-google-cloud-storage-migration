@@ -1,14 +1,11 @@
 require("dotenv").config();
 const fs = require("fs");
-const {
-  getVideoById,
-  downloadVideoFromUrl,
-  listVideos,
-} = require("./vimeo/api");
+const vimeoApi = require("./vimeo/api");
+const thirdPartyApi = require("./third-party/videoclient");
 const { getVimeoHighestQualityDownloadLink } = require("./utils");
-const vimeoIds = require("./data/vimeo_ids.json");
 const storage = require("./gcp/cloud-storage");
 const path = require("path");
+const { downloadVideoFromUrl } = require("./helpers/downloadVideoFromUrl");
 
 const dirs = ["media", "temp", "src/data/vimeo-db"];
 
@@ -20,7 +17,14 @@ for (const dir of dirs) {
 
 let skipCount = 0;
 
-const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
+const downloadAndUpload = async ({
+  id,
+  c,
+  total,
+  i,
+  checkFromGcs = false,
+  platform = "vimeo",
+}) => {
   try {
     const skipPath = path.join(__dirname, "data", "vimeo_ids_skip.json");
     let videoIdsSkip = fs.existsSync(skipPath)
@@ -44,7 +48,7 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
     } else if (checkFromGcs) {
       await storage.isFileExist(prefix);
     }
-    
+
     if (fileExist) {
       console.log(`${counter} [x] #--> Video ${id} already uploaded before`);
       if (fs.existsSync(savepath)) {
@@ -53,12 +57,18 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
       }
       return;
     }
-    const video = await getVideoById(id);
+    const video =
+      platform == "vimeo"
+        ? await vimeoApi.getVideoById(id)
+        : await thirdPartyApi.getVideoById(id);
     if (!video) {
       console.log(`[x] #--> Video ${id} not found`);
       return;
     }
-    const url = getVimeoHighestQualityDownloadLink(video);
+    const url =
+      platform == "vimeo"
+        ? getVimeoHighestQualityDownloadLink(video)
+        : video.manifest_url;
     if (!url) {
       console.log(`[x] #--> Video ${id} has no download link`);
       return;
@@ -109,17 +119,28 @@ const downloadAndUpload = async ({ id, c, total, i, checkFromGcs = false }) => {
   }
 };
 
-const startDownloadUpload = async () => {
+const startDownloadUpload = async ({ platform }) => {
+  if (!platform) {
+    console.log("Platform is required");
+    return;
+  }
+
   let concurrency = 50;
 
   let c = 0;
   let i = 0;
   let p_arr = [];
-  const total = vimeoIds.length;
-  for (const id of vimeoIds) {
+  const videoIds =
+    platform == "vimeo"
+      ? require("./data/vimeo_ids.json")
+      : require("./data/third-party-remaining.json");
+  const total = videoIds.length;
+  for (const id of videoIds) {
     c++;
     i++;
-    p_arr.push(downloadAndUpload({ id, c, total, i, checkFromGcs: true }));
+    p_arr.push(
+      downloadAndUpload({ id, c, total, i, checkFromGcs: true, platform })
+    );
     if (p_arr.length >= concurrency) {
       await Promise.all(p_arr);
       p_arr = [];
@@ -132,7 +153,7 @@ const fetchAndSaveVimeoVideos = async (page = 1, totalPage) => {
   totalPage = totalPage ? Math.ceil(totalPage) : null;
   console.log(`Fetching page ${page} out of ${totalPage}`);
   const per_page = 100;
-  const data = await listVideos({ per_page, page });
+  const data = await vimeoApi.listVideos({ per_page, page });
   if (!data) {
     console.log("ERROR fetchAndSaveVimeoVideos", page);
     return;
@@ -166,8 +187,57 @@ const vimeoVideosToIds = () => {
   console.log("Vimeo videos to ids -> done");
 };
 
+const thirdPartyJsonPath = path.resolve(__dirname, "data", `third-party.json`);
+const gcsBucketJsonPath = path.resolve(__dirname, "data", `gcs-bucket.json`);
+const remainingThirdPartyJsonPath = path.resolve(
+  __dirname,
+  "data",
+  `third-party-remaining.json`
+);
+
+const listVideosFromThirdParty = async () => {
+  const data = await thirdPartyApi.listVideos({ page_size: 15000 });
+  fs.writeFileSync(thirdPartyJsonPath, JSON.stringify(data, null, 2));
+};
+
+const listGcsVideos = async () => {
+  let data = await storage.getFiles();
+  data = data.map((x) => x.metadata);
+  fs.writeFileSync(gcsBucketJsonPath, JSON.stringify(data, null, 2));
+};
+
+const findRemainingVideos = async () => {
+  const thirdPartyData = JSON.parse(
+    fs.readFileSync(thirdPartyJsonPath, "utf8")
+  );
+  const gcsBucketData = JSON.parse(fs.readFileSync(gcsBucketJsonPath, "utf8"));
+  const thirdPartyIds = thirdPartyData.result.map((x) =>
+    x.reference_id && isFinite(x.reference_id)
+      ? x.reference_id
+      : x.custom_id1 || "null"
+  );
+  const gcsBucketIds = gcsBucketData.map(
+    (x) => x.name.split("/")[1].split("-")[0]
+  );
+  console.log(gcsBucketIds);
+  const remainingIds = thirdPartyIds.filter((x) => !gcsBucketIds.includes(x));
+  fs.writeFileSync(
+    remainingThirdPartyJsonPath,
+    JSON.stringify(remainingIds, null, 2)
+  );
+};
+
+const processThirdPartyAndGcs = async () => {
+  console.log("Start");
+  await listVideosFromThirdParty();
+  await listGcsVideos();
+  findRemainingVideos();
+  console.log("Done");
+};
+
 const main = async () => {
-  startDownloadUpload();
+  processThirdPartyAndGcs();
+  // startDownloadUpload({ platform: "third-party" });
 };
 
 main();

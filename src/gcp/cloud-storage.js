@@ -21,10 +21,11 @@ const createBucket = async () => {
 const getFiles = async (prefix) => {
   try {
     const [files] = await storage.bucket(bucketName).getFiles({ prefix });
-    console.log("Files:");
-    files.forEach((file) => {
-      console.log(file.name);
-    });
+    // console.log("Files:");
+    // files.forEach((file) => {
+    //   console.log(file.name);
+    // });
+    return files;
   } catch (error) {
     console.log("ERROR getFiles:", error);
   }

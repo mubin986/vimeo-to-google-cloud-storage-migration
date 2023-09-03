@@ -3,9 +3,11 @@ node_modules
 package-lock.json
 vimeo_ids.json
 cloud-storage-key.json
+third-party*.json
 media
 .DS_Store
 tmp
 temp
 vimeo-db
 vimeo_ids_skip.json
+gcs-bucket.json
