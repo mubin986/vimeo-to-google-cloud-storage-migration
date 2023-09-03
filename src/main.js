@@ -68,7 +68,7 @@ const downloadAndUpload = async ({
     const url =
       platform == "vimeo"
         ? getVimeoHighestQualityDownloadLink(video)
-        : video.manifest_url;
+        : video.result?.manifest_url;
     if (!url) {
       console.log(`[x] #--> Video ${id} has no download link`);
       return;
