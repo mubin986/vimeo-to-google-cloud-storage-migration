@@ -36,20 +36,18 @@ const fetchVideoByUrl = async ({ title, url, _id }) => {
       `/library/${libraryId}/videos/fetch`,
       { url }
     );
-    setTimeout(() => {
-      const body = {
-        title,
-      };
-      if (_id) {
-        body.metaTags = [
-          {
-            property: "_id",
-            value: _id,
-          },
-        ];
-      }
-      updateVideoById(response.data.id, body);
-    }, 5000);
+    const body = {
+      title,
+    };
+    if (_id) {
+      body.metaTags = [
+        {
+          property: "_id",
+          value: _id,
+        },
+      ];
+    }
+    await updateVideoById(response.data.id, body);
     return response.data;
   } catch (error) {
     console.log("ERROR fetchVideoByUrl");
@@ -64,7 +62,7 @@ const getVideoById = async (id) => {
     );
     return response.data;
   } catch (error) {
-    console.log("ERROR getVideoById");
+    console.log("ERROR getVideoById", error);
     return null;
   }
 };

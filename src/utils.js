@@ -1,8 +1,10 @@
 const fs = require("fs");
 
 module.exports = {
-  parseTitleFromGcsName: (name) => {
-    
+  parseVideoTitleFromGcsName: (name, prefix = "videos/") => {
+    let title = name.replaceAll(prefix, "");
+    title = title.replaceAll(".mp4", "");
+    return title;
   },
   getFilesizeInBytes: (filepath) => {
     const stats = fs.statSync(filepath);
