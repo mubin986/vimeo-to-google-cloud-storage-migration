@@ -39,7 +39,7 @@ const main = async () => {
       {}
     );
     console.log(`${c}/${total} uploading -> ${title}`);
-    if (c >= 100) break;
+    // if (c >= 100) break;
   }
   console.log("All done!");
 };
