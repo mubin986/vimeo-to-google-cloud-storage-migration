@@ -1,6 +1,9 @@
 const fs = require("fs");
 
 module.exports = {
+  parseTitleFromGcsName: (name) => {
+    
+  },
   getFilesizeInBytes: (filepath) => {
     const stats = fs.statSync(filepath);
     const fileSizeInBytes = stats.size;
