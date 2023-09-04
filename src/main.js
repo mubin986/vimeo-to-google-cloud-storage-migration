@@ -135,7 +135,7 @@ const startDownloadUpload = async ({ platform }) => {
     console.log("Please provide platform");
     return;
   }
-  let concurrency = 3;
+  let concurrency = 6;
 
   let c = 0;
   const videoIds =
