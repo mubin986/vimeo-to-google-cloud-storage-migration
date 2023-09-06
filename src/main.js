@@ -25,6 +25,8 @@ const downloadAndUpload = async ({
   i,
   checkFromGcs = false,
   platform = "vimeo",
+  manifest_url,
+  title,
 }) => {
   try {
     const skipPath = path.join(__dirname, "data", "vimeo_ids_skip.json");
@@ -59,7 +61,9 @@ const downloadAndUpload = async ({
       return;
     }
     const video =
-      platform == "vimeo"
+      manifest_url && title
+        ? { result: { manifest_url, name: title } }
+        : platform == "vimeo"
         ? await vimeoApi.getVideoById(id)
         : await thirdPartyApi.getVideoByCustomId(id);
     if (!video) {
@@ -145,13 +149,26 @@ const startDownloadUpload = async ({ platform }) => {
     platform == "vimeo"
       ? require("./data/vimeo_ids.json")
       : require("./data/third-party-remaining.json");
-  const total = videoIds.length;
+  const recordings = require("./data/db-recordings.json");
+  const arr = recordings.filter((item) => !item.bunny_id) || videoIds;
+  console.log("Total videos", arr.length);
+  // return;
+  const total = arr.length;
   setInterval(displayDownUpStatus, 5000);
-  for (const id of videoIds) {
+  for (const item of arr) {
     c++;
     i++;
     p_arr.push(
-      downloadAndUpload({ id, c, total, i, checkFromGcs: true, platform })
+      downloadAndUpload({
+        id: typeof item == "string" ? item : item._id,
+        c,
+        total,
+        i,
+        checkFromGcs: true,
+        platform,
+        manifest_url: item?.manifest_url,
+        title: item?.title,
+      })
     );
     if (p_arr.length >= concurrency) {
       await Promise.all(p_arr);
